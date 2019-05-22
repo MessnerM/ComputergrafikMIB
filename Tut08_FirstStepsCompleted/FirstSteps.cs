@@ -58,7 +58,7 @@ namespace Fusee.Tutorial.Core
             Diagnostics.Log(TimeSinceStart);
 
             // Clear the backbuffer
-            RC.Clear(ClearFlags.Color | ClearFlags.Depth);
+            RC.Clear(ClearFlags.Color | ClearFlags.Depth);//comment
 
             // Animate the camera angle
             _camAngle = _camAngle + 90.0f * M.Pi/180.0f * DeltaTime ;
