@@ -19,7 +19,8 @@ namespace Fusee.Tutorial.Core
         private SceneContainer _scene;
         private SceneRenderer _sceneRenderer;
         private float _camAngle = 0;
-        private TransformComponent _cubeTransform, _cubeTransform1;
+        private TransformComponent _cubeTransform, _cubeTransform1, _cubeTransform2;
+        private ShaderEffectComponent cubeShader;
 
         // Init is called on startup. 
         public override void Init()
@@ -30,7 +31,7 @@ namespace Fusee.Tutorial.Core
             // Create a scene with a cube
             // The three components: one XForm, one Material and the Mesh
             _cubeTransform = new TransformComponent {Scale = new float3(1, 1, 1), Translation = new float3(-2, -2, -2)};
-            var cubeShader = new ShaderEffectComponent
+            cubeShader = new ShaderEffectComponent
             { 
                 Effect = SimpleMeshes.MakeShaderEffect(new float3 (0, 0, 1), new float3 (1, 1, 1),  4)
             };
@@ -45,11 +46,11 @@ namespace Fusee.Tutorial.Core
             //--------------------------------------------------------------------------------------------------------------------------
             // Create a scene with a cube
             // The three components: one XForm, one Material and the Mesh
-            _cubeTransform1 = new TransformComponent {Scale = new float3(0.5f, 2, 0.5f), Translation = new float3(2, 2, 2), Rotation= new float3(1,2,3)};
+            _cubeTransform1 = new TransformComponent {Scale = new float3(0.5f, 2, 0.5f), Translation = new float3(-20, 2, 2), Rotation= new float3(0,0,0)};
                 
             
-            var cubeShader1 = new ShaderEffectComponent
-            { 
+            var cubeShader1 = new ShaderEffectComponent{
+            
                 Effect = SimpleMeshes.MakeShaderEffect(new float3 (1, 0.9f, 1), new float3 (1, 1, 1),  4)
             };
             var cubeMesh1 = SimpleMeshes.CreateCuboid(new float3(10, 10, 10));
@@ -60,11 +61,37 @@ namespace Fusee.Tutorial.Core
             cubeNode1.Components.Add(cubeShader1);
             cubeNode1.Components.Add(cubeMesh1);
             //--------------------------------------------------------------------------------------------------------------------------
+            // Create a scene with a cube
+            // The three components: one XForm, one Material and the Mesh
+            
+           
+           
+            _cubeTransform2 = new TransformComponent {Scale = new float3(0.5f, 2, 0.5f), Translation = new float3(20, 2, 2), Rotation= new float3(1,2,3)};
+                
+            
+            var cubeShader2 = new ShaderEffectComponent
+            { 
+                Effect = SimpleMeshes.MakeShaderEffect(new float3 (1, 0.9f, 1), new float3 (1, 1, 1),  4)
+            };
+           
+            var cubeMesh2 = SimpleMeshes.CreateCuboid(new float3(10, 10, 10));
+
+            var wuerfel = new SceneNodeContainer();
+            wuerfel.Components = new List<SceneComponentContainer>();
+            wuerfel.Components.Add(_cubeTransform2);
+            wuerfel.Components.Add(cubeShader2);
+            wuerfel.Components.Add(cubeMesh2);
+
+            
+            
+            //--------------------------------------------------------------------------------------------------------------------------
             // Create the scene containing the cube as the only object
             _scene = new SceneContainer();
             _scene.Children = new List<SceneNodeContainer>();
             _scene.Children.Add(cubeNode);
             _scene.Children.Add(cubeNode1);
+            _scene.Children.Add(wuerfel);
+            
             // Create a scene renderer holding the scene above
             _sceneRenderer = new SceneRenderer(_scene);
         }
@@ -79,12 +106,17 @@ namespace Fusee.Tutorial.Core
 
             // Animate the camera angle
            // _camAngle = _camAngle + 90.0f * M.Pi/180.0f * DeltaTime ;
+            var color =  new float3(M.Sin(0.3f*TimeSinceStart),M.Sin(0.2f*TimeSinceStart),M.Sin(0.9f*TimeSinceStart));
 
             // Animate the cube
-            _cubeTransform.Translation = new float3(-1 * M.Sin(1 * TimeSinceStart), 5 * M.Sin(1 * TimeSinceStart), 0);
-            _cubeTransform1.Translation = new float3(1 * M.Sin(1 * TimeSinceStart), -5 * M.Sin(1 * TimeSinceStart), 0);
-            _cubeTransform1.Scale = new float3(2*TimeSinceStart,1,2);
-            _cubeTransform1.Rotation = new float3(1,1+TimeSinceStart,2);
+            //Cube
+            _cubeTransform.Rotation = new float3(0,5 * M.Sin(1 * TimeSinceStart),0);
+            cubeShader.Effect.SetEffectParam("DiffuseColor",color);
+            //cube1
+            
+            _cubeTransform1.Scale = new float3(M.Sin(1 * TimeSinceStart)+1,1,2);
+            //wuerfel
+            _cubeTransform2.Translation = new float3(20, M.Sin(1 * TimeSinceStart), 0);
             // Setup the camera 
             RC.View = float4x4.CreateTranslation(0, 0, 50) * float4x4.CreateRotationY(_camAngle);
 
