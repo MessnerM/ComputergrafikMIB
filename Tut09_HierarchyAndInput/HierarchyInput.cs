@@ -113,7 +113,7 @@ namespace Fusee.Tutorial.Core
         public override void RenderAFrame()
         {
             // Clear the backbuffer
-            RC.Clear(ClearFlags.Color | ClearFlags.Depth);
+            RC.Clear(ClearFlags.Color | ClearFlags.Depth);//comment
 
             // Setup the camera 
             RC.View = float4x4.CreateTranslation(0, -10, 50) * float4x4.CreateRotationY(_camAngle);
