@@ -181,7 +181,7 @@ namespace Fusee.Tutorial.Core
                                                         },
                                                         Children = new List<SceneNodeContainer>
                                                         {
-                                                            // PIVOT LEFT FINGER
+                                                            //  left finger
                                                             new SceneNodeContainer
                                                             {
                                                                 Components = new List<SceneComponentContainer>
@@ -191,7 +191,7 @@ namespace Fusee.Tutorial.Core
                                                                 },
                                                                 Children = new List<SceneNodeContainer>
                                                                 {
-                                                                    // LEFT FINGER
+                                                                    // left finger
                                                                     new SceneNodeContainer
                                                                     {
                                                                         Components = new List<SceneComponentContainer>
@@ -247,20 +247,20 @@ namespace Fusee.Tutorial.Core
 
                                                                             // MESH COMPONENT
                                                                             SimpleMeshes.CreateCuboid(new float3(1, 5, 1))
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                                                                        }//end components
+                                                                    }//end node container
+                                                                }// end node container
+                                                            }//end node container
+                                                        }//end list
+                                                    }//end node container
+                                                }//end scene node container
+                                            }//end node container
+                                        }//end blue node container
+                                    }//end red node container
+                                }//end children node container
+                            }//end new node container
+                        }//end node container
+                    }//node red body
                 }
             };
         }
@@ -286,7 +286,7 @@ namespace Fusee.Tutorial.Core
             // Setup the camera 
             RC.View = float4x4.CreateTranslation(0, -10, 50) * float4x4.CreateRotationY(_camAngle);
 
-            // Inputs
+            // Input
             float body_rotation_y = _bodyTransform.Rotation.y;  
             body_rotation_y += 2f * Keyboard.LeftRightAxis * Time.DeltaTime;
             _bodyTransform.Rotation = new float3(0, body_rotation_y, 0);
