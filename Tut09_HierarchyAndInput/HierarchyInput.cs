@@ -20,42 +20,82 @@ namespace Fusee.Tutorial.Core
         private SceneRenderer _sceneRenderer;
         private float _camAngle = 0;
         private TransformComponent _baseTransform;
-
-        SceneContainer CreateScene()
+        private TransformComponent _bodyTransform;
+         private TransformComponent _upperArmTransform;
+    SceneContainer CreateScene()
+    {
+        // Initialize transform components that need to be changed inside "RenderAFrame"
+        _baseTransform = new TransformComponent
         {
-            // Initialize transform components that need to be changed inside "RenderAFrame"
-            _baseTransform = new TransformComponent
-            {
-                Rotation = new float3(0, 0, 0),
-                Scale = new float3(1, 1, 1),
-                Translation = new float3(0, 0, 0)
-            };
+            Rotation = new float3(0, 0, 0),
+            Scale = new float3(1, 1, 1),
+            Translation = new float3(0, 0, 0)
+        };
+        _bodyTransform = new TransformComponent
+        {
+            Rotation = new float3(0, 0, 0),
+            Scale = new float3(1, 1, 1),
+            Translation = new float3(0, 6, 0)//Position
+        };
 
-            // Setup the scene graph
-            return new SceneContainer
+        // Setup the scene graph
+        return new SceneContainer
+        {
+            Children = new List<SceneNodeContainer>
             {
-                Children = new List<SceneNodeContainer>
+                // GREY BASE
+                new SceneNodeContainer
                 {
-                    new SceneNodeContainer
+                    Components = new List<SceneComponentContainer>
                     {
-                        Components = new List<SceneComponentContainer>
+                        // TRANSFROM COMPONENT
+                        _baseTransform,
+
+                        // MATERIAL COMPONENT
+                        new MaterialComponent
                         {
-                            // TRANSFROM COMPONENT
-                            _baseTransform,
+                            Diffuse = new MatChannelContainer { Color = new float3(0.7f, 0.7f, 0.7f) },
+                            Specular = new SpecularChannelContainer { Color = new float3(0.7f, 0.7f, 0.7f), Shininess = 1 }
+                        },
 
-                            // SHADER EFFECT COMPONENT
-                            new ShaderEffectComponent
+                        // MESH COMPONENT
+                        SimpleMeshes.CreateCuboid(new float3(10, 2, 10))
+                    }
+                },
+               // RED BODY
+                new SceneNodeContainer
+                {
+                    Components = new List<SceneComponentContainer>
+                    {
+                        _bodyTransform,
+                        new MaterialComponent
+                        {
+                            Diffuse = new MatChannelContainer { Color = new float3(1, 0, 0) },
+                            Specular = new SpecularChannelContainer { Color = new float3(1, 1, 1), Shininess = 5 }
+                        },
+                        SimpleMeshes.CreateCuboid(new float3(2, 10, 2))
+                    },
+                    Children = new List<SceneNodeContainer>
+                    {
+                        // GREEN UPPER ARM
+                        new SceneNodeContainer
+                        {
+                            Components = new List<SceneComponentContainer>
                             {
-                                Effect = SimpleMeshes.MakeShaderEffect(new float3(0.7f, 0.7f, 0.7f), new float3(0.7f, 0.7f, 0.7f), 5)
+                                _upperArmTransform,
+                                new MaterialComponent
+                                {
+                                    Diffuse = new MatChannelContainer { Color = new float3(0, 1, 0) },
+                                    Specular = new SpecularChannelContainer { Color = new float3(1, 1, 1), Shininess = 5 }
+                                },
+                                SimpleMeshes.CreateCuboid(new float3(2, 10, 2))
                             },
-
-                            // MESH COMPONENT
-                            SimpleMeshes.CreateCuboid(new float3(10, 2, 10))
                         }
                     }
                 }
-            };
-        }
+            }
+        };
+    }
 
         // Init is called on startup. 
         public override void Init()
@@ -66,7 +106,7 @@ namespace Fusee.Tutorial.Core
             _scene = CreateScene();
 
             // Create a scene renderer holding the scene above
-            _sceneRenderer = new SceneRenderer(_scene);
+            _sceneRenderer = new SceneRenderer(sc: _scene);
         }
 
         // RenderAFrame is called once a frame

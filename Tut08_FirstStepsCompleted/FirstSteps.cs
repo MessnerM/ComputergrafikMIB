@@ -83,6 +83,7 @@ namespace Fusee.Tutorial.Core
             // Animate the cube
             _cubeTransform.Translation = new float3(-1 * M.Sin(1 * TimeSinceStart), 5 * M.Sin(1 * TimeSinceStart), 0);
             _cubeTransform1.Translation = new float3(1 * M.Sin(1 * TimeSinceStart), -5 * M.Sin(1 * TimeSinceStart), 0);
+            
             _cubeTransform1.Scale = new float3(2*TimeSinceStart,1,2);
             _cubeTransform1.Rotation = new float3(1,1+TimeSinceStart,2);
             // Setup the camera 
