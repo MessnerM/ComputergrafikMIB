@@ -106,7 +106,7 @@ namespace Fusee.Tutorial.Core
             _scene = CreateScene();
 
             // Create a scene renderer holding the scene above
-            _sceneRenderer = new SceneRenderer(sc: _scene);
+            _sceneRenderer = new SceneRenderer(_scene);
         }
 
         // RenderAFrame is called once a frame
