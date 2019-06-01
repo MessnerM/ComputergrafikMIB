@@ -25,7 +25,7 @@ namespace Fusee.Tutorial.Core
         private TransformComponent _upperArmTransform;
         private TransformComponent _lowerArmTransform;
         private TransformComponent _leftFingerTransform;
-        private TransformComponent _rightFingerTransform;
+        private TransformComponent _rechterfingertrans;
 
         SceneContainer CreateScene()
         {
@@ -65,7 +65,7 @@ namespace Fusee.Tutorial.Core
                 Translation = new float3(-0.5f, 4.5f, 0)
             };     
 
-            _rightFingerTransform = new TransformComponent
+           _rechterfingertrans = new TransformComponent
             {
                 Rotation = new float3(0, 0, 0),
                 Scale = new float3(1, 1, 1),
@@ -222,7 +222,7 @@ namespace Fusee.Tutorial.Core
                                                                 Components = new List<SceneComponentContainer>
                                                                 {
                                                                     // TRANSFROM COMPONENT
-                                                                    _rightFingerTransform
+                                                                   _rechterfingertrans
                                                                 },
                                                                 Children = new List<SceneNodeContainer>
                                                                 {
@@ -318,7 +318,7 @@ namespace Fusee.Tutorial.Core
             }
             _leftFingerTransform.Rotation = new float3(0, 0, left_finger_rotation_z);
             
-            float right_finger_rotation_z = _rightFingerTransform.Rotation.z;  
+            float right_finger_rotation_z =_rechterfingertrans.Rotation.z;  
             right_finger_rotation_z -= 2f * Keyboard.ADAxis * Time.DeltaTime;
             if( right_finger_rotation_z < -1.5f) {
                 right_finger_rotation_z = -1.5f;
@@ -326,7 +326,7 @@ namespace Fusee.Tutorial.Core
             if( right_finger_rotation_z > 0) {
                 right_finger_rotation_z = 0;
             }
-            _rightFingerTransform.Rotation = new float3(0, 0, right_finger_rotation_z);
+           _rechterfingertrans.Rotation = new float3(0, 0, right_finger_rotation_z);
 
 
 
