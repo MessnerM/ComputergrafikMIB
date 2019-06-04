@@ -49,7 +49,9 @@ namespace Fusee.Tutorial.Core
                             },
 
                             // MESH COMPONENT
-                            SimpleMeshes.CreateCuboid(new float3(10, 10, 10))
+                            //SimpleMeshes.CreateCuboid(new float3(10, 10, 10))
+                            SimpleMeshes.CreateCylinder1(5, 10, 8)
+
                         }
                     },
                 }
@@ -77,7 +79,7 @@ namespace Fusee.Tutorial.Core
             RC.Clear(ClearFlags.Color | ClearFlags.Depth);
 
             // Setup the camera 
-            RC.View = float4x4.CreateTranslation(0, 0, 80) * float4x4.CreateRotationX(-(float) Atan(15.0 / 40.0));
+            RC.View = float4x4.CreateTranslation(0, 0, 80) * float4x4.CreateRotationX(-(float) Atan(15.0 / 40.0));//Kamera wird um -80 auf der Z Achse verschoben
 
             // Render the scene on the current render context
             _sceneRenderer.Render(RC);
