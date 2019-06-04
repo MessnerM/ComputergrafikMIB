@@ -174,8 +174,8 @@ namespace Fusee.Tutorial.Core
 
         public static Mesh CreateCylinder1(float radius, float height, int segments)
         {
-            float3[] verts = new float3[2 * 3 * segments];    // one vertex per segment and one extra for the center point
-            float3[] norms = new float3[2 * 3 * segments];    // one normal at each vertex
+            float3[] verts = new float3[((segments+1)*2)+segments];    // one vertex per segment and one extra for the center point
+            float3[] norms = new float3[((segments+1)*2)+segments];    // one normal at each vertex
             ushort[] tris  = new ushort[segments * 3*4];  // a triangle per segment. Each triangle is made of three indices
 
             float delta = 2 * M.Pi / segments;//winkel erechnen
@@ -197,7 +197,7 @@ namespace Fusee.Tutorial.Core
                 verts[4*i + 1] = new float3(radius * M.Cos(i * delta), 0.5f * height, radius * M.Sin(i * delta));
                 verts[4*i + 2] = new float3(radius * M.Cos(i * delta), -0.5f * height, radius * M.Sin(i * delta));
                 verts[4*i + 3] = new float3(radius * M.Cos(i * delta), -0.5f * height, radius * M.Sin(i * delta));
-
+                
                 // Stitch the current segment (using the center, the current and the previous point)
                 tris[3*i - 1] = (ushort) segments; // center point
                 tris[3*i - 2] = (ushort) i;        // current segment point
@@ -227,7 +227,7 @@ namespace Fusee.Tutorial.Core
             
 
              // Stitch the last segment
-            tris[3 * segments - 1] = (ushort)(segments*4);          // center point
+            tris[3 * segments - 1] = (ushort)(segments);          // center point
             tris[3 * segments - 2] = (ushort)0;                 // wrap around
             tris[3 * segments - 3] = (ushort)(segments - 1);    // last segment point
 
