@@ -50,7 +50,7 @@ namespace Fusee.Tutorial.Core
 
                             // MESH COMPONENT
                             //SimpleMeshes.CreateCuboid(new float3(10, 10, 10))
-                            SimpleMeshes.CreateCylinder1(5, 10, 8)
+                            SimpleMeshes.CreateCylinder(5, 10, 8)
 
                         }
                     },
