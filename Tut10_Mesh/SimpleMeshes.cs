@@ -172,77 +172,84 @@ namespace Fusee.Tutorial.Core
             return ShaderCodeBuilder.MakeShaderEffectFromMatComp(temp);
         }
 
-        public static Mesh CreateCylinder1(float radius, float height, int segments)
+        public static Mesh CreateCylinder(float radius, float height, int segments)
         {
-            float3[] verts = new float3[2 * 3 * segments];    // one vertex per segment and one extra for the center point
-            float3[] norms = new float3[2 * 3 * segments];    // one normal at each vertex
-            ushort[] tris  = new ushort[segments * 3*4];  // a triangle per segment. Each triangle is made of three indices
+            float3[] verts = new float3[4*segments +2];    // one vertex per segment and one extra for the center point
+            float3[] norms = new float3[4*segments +2];    // one normal at each vertex
+            ushort[] tris  = new ushort[4*3*segments];  // a triangle per segment. Each triangle is made of three indices
+            
+            float delta = 2 * M.Pi / segments;
 
-            float delta = 2 * M.Pi / segments;//winkel erechnen
+            verts[4*segments] = new float3(0, 0.5f * height, 0);
+            verts[4 * segments + 1] = new float3(0, - 0.5f * height, 0);
+            norms[4*segments] = float3.UnitY;
+            norms[4 * segments + 1] = -float3.UnitY;
 
-            // The center (store at the last position in the vertex array (index 'segments'))
-            verts[segments] = float3.Zero;
-            norms[segments] = float3.UnitY;
+            verts[0] = new float3(radius, 0.5f*height, 0);
+            verts[1] = new float3(radius, 0.5f*height, 0);
+            verts[2] = new float3(radius, -0.5f*height, 0);
+            verts[3] = new float3(radius, -0.5f*height, 0);
 
-            // The first and last point (first point in the list (index 0))
-            verts[0] = new float3(radius, 0, 0);
             norms[0] = float3.UnitY;
+            norms[1] = float3.UnitX;
+            norms[2] = float3.UnitX;
+            norms[3] = float3.UnitY;
 
             for (int i = 1; i < segments; i++)
             {
-                // Create the current point and store it at index i
-                verts[i] = new float3(radius * M.Cos(i * delta), 0.5f * height, radius * M.Sin(i * delta));
-                norms[i] = float3.UnitY;
-                verts[4*i + 0] = new float3(radius * M.Cos(i * delta), 0.5f * height, radius * M.Sin(i * delta));
-                verts[4*i + 1] = new float3(radius * M.Cos(i * delta), 0.5f * height, radius * M.Sin(i * delta));
-                verts[4*i + 2] = new float3(radius * M.Cos(i * delta), -0.5f * height, radius * M.Sin(i * delta));
-                verts[4*i + 3] = new float3(radius * M.Cos(i * delta), -0.5f * height, radius * M.Sin(i * delta));
+                verts[4*i+0]= new float3(radius * M.Cos(i * delta), 0.5f*height, radius * M.Sin(i * delta));
+                verts[4*i+1]= new float3(radius * M.Cos(i * delta), 0.5f*height, radius * M.Sin(i * delta));
+                verts[4*i+2]= new float3(radius * M.Cos(i * delta), -0.5f*height, radius * M.Sin(i * delta));
+                verts[4*i+3]= new float3(radius * M.Cos(i * delta), -0.5f*height, radius * M.Sin(i * delta));
 
-                // Stitch the current segment (using the center, the current and the previous point)
-                tris[3*i - 1] = (ushort) segments; // center point
-                tris[3*i - 2] = (ushort) i;        // current segment point
-                tris[3*i - 3] = (ushort) (i-1);    // previous segment point
+                norms[4*1+0]= float3.UnitY;
+                norms[4*i+1] = new float3(M.Cos(i * delta), 0, M.Sin(i * delta));
+                norms[4*i+2] = new float3(M.Cos(i * delta), 0, M.Sin(i * delta));
+                norms[4*1+3]= -float3.UnitY;
 
-                   // top triangle
-                tris[12*(i-1) + 0] = (ushort) (4*segments+1);       // top center point
-                tris[12*(i-1) + 1] = (ushort) (4*i     + 0);      // current top segment point
-                tris[12*(i-1) + 2] = (ushort) (4*(i-1) + 0);      // previous top segment point
+                 // top triangle
+                tris[12*(i-1) + 0] = (ushort)(4*segments);       // top center point
+                tris[12*(i-1) + 1] = (ushort)(4*(i-1)+ 0);      // current top segment point
+                tris[12*(i-1) + 2] = (ushort)(4*i+0);      // previous top segment point
 
                 // side triangle 1
-                tris[12*(i-1) + 3] = (ushort) (4*(i-1) + 2);      // previous lower shell point
-                tris[12*(i-1) + 4] = (ushort) (4*i     + 2);      // current lower shell point
-                tris[12*(i-1) + 5] = (ushort) (4*i     + 1);      // current top shell point
+                tris[12*(i-1) + 3] = (ushort)(4*(i-1) + 2);      // previous lower shell point
+                tris[12*(i-1) + 4] = (ushort)(4*i     + 2);      // current lower shell point
+                tris[12*(i-1) + 5] = (ushort)(4*i     + 1);      // current top shell point
 
                 // side triangle 2
                 tris[12*(i-1) + 6] = (ushort) (4*(i-1) + 2);      // previous lower shell point
                 tris[12*(i-1) + 7] = (ushort) (4*i     + 1);      // current top shell point
-                tris[12*(i-1) + 8] = (ushort)(4*(i-1) + 1);      // previous top shell point
+                tris[12*(i-1) + 8] = (ushort) (4*(i-1) + 1);      // previous top shell point
 
                 // bottom triangle
                 tris[12*(i-1) + 9]  = (ushort)(4*segments+1);    // bottom center point
-                tris[12*(i-1) + 10] = (ushort)(4*(i-1) + 3);     // current bottom segment point
-                tris[12*(i-1) + 11] = (ushort)(4*i     + 3);     // previous bottom segment point
-            };//end for
+                tris[12*(i-1) + 10] = (ushort)(4*+3);     // current bottom segment point
+                tris[12*(i-1) + 11] = (ushort)(4*(i-1)  + 3);     // previous bottom segment point
+            }
+            // Stitch the last segment
+            tris[12*segments -1] = (ushort) (4*segments + 1);   
+            tris[12*segments -2] = (ushort) (4*segments - 1);     
+            tris[12*segments -3] = (ushort) (3);
 
+            tris[12*segments -4] = (ushort) (4*segments - 2);   
+            tris[12*segments -5] = (ushort) (4*segments - 3);     
+            tris[12*segments -6] = (ushort) (1);
+
+            tris[12*segments -7] = (ushort) (1);   
+            tris[12*segments -8] = (ushort) (2);     
+            tris[12*segments -9] = (ushort) (4*segments - 2);
+
+            tris[12*segments -10] = (ushort) (0);   
+            tris[12*segments -11] = (ushort) (4*segments - 4);     
+            tris[12*segments -12] = (ushort) (4*segments);
             
-
-             // Stitch the last segment
-            tris[3 * segments - 1] = (ushort)(segments*4);          // center point
-            tris[3 * segments - 2] = (ushort)0;                 // wrap around
-            tris[3 * segments - 3] = (ushort)(segments - 1);    // last segment point
-
             return new Mesh
             {
                 Vertices = verts,
                 Normals = norms,
-                Triangles = tris, 
-            };//end new Mesh
-        }//end CreateCylinder1
-
-
-        public static Mesh CreateCylinder(float radius, float height, int segments)
-        {
-            return CreateConeFrustum(radius, radius, height, segments);
+                Triangles = tris,
+            };
         }
 
         public static Mesh CreateCone(float radius, float height, int segments)
