@@ -16,11 +16,18 @@ namespace Fusee.Tutorial.Core
 {
     public class AssetsPicking : RenderCanvas
     {
-        private SceneContainer _scene;
+        private SceneContainer _scene;                private float _camAngle = 0;
         private SceneRenderer _sceneRenderer;
         private TransformComponent _baseTransform;
         private TransformComponent _zugTransform;
+        private TransformComponent _vorderRad_L_Transform;
+                private TransformComponent _vorderRad_L_Transform1;
+        private TransformComponent _vorderRad_R_Transform1;
+        private TransformComponent _vorderRad_R_Transform;
+        private TransformComponent _hinterRad_L_Transform;
+        private TransformComponent _hinterRad_R_Transform;
         private ShaderEffectComponent _zugShader;
+        private TransformComponent _carTrans;
 
         private ScenePicker _scenePicker;
           private PickResult _currentPick;
@@ -82,19 +89,44 @@ namespace Fusee.Tutorial.Core
         public override void RenderAFrame()
         {
            // _baseTransform.Rotation = new float3(0, M.MinAngle(TimeSinceStart), 0);
-
+           // _carTrans = _scene.Children.FindNodes(node => node.Name == "Plane")?.FirstOrDefault()?.GetTransform.Translation();
             _zugTransform = _scene.Children.FindNodes(node => node.Name == "Cube")?.FirstOrDefault()?.GetTransform();
             _zugShader = _scene.Children.FindNodes(node => node.Name == "Cube")?.FirstOrDefault()?.GetComponent<ShaderEffectComponent>();
+            _vorderRad_L_Transform = _scene.Children.FindNodes(node => node.Name == "Rad_L_vorne.001")?.FirstOrDefault()?.GetTransform();
+            _vorderRad_R_Transform = _scene.Children.FindNodes(node => node.Name == "Rad_R_vorne.001")?.FirstOrDefault()?.GetTransform();
+            _vorderRad_L_Transform1 = _scene.Children.FindNodes(node => node.Name == "Rad_L_vorne.001")?.FirstOrDefault()?.GetTransform();
+            _vorderRad_R_Transform1 = _scene.Children.FindNodes(node => node.Name == "Rad_R_vorne.001")?.FirstOrDefault()?.GetTransform();
+            _hinterRad_L_Transform = _scene.Children.FindNodes(node => node.Name == "Rad_L_vorne")?.FirstOrDefault()?.GetTransform();
+            _hinterRad_R_Transform = _scene.Children.FindNodes(node => node.Name == "Rad_R_vorne")?.FirstOrDefault()?.GetTransform();
             //_zugShader.Effect.SetEffectParam("DiffuseColor", new float3(1,1,1));
 
+            float _lenken_vorne = _vorderRad_L_Transform1.Rotation.x;//Links Rechts Lenkung Vorne
+            float _gas = _hinterRad_L_Transform.Rotation.y;//Vor und zurück fahren
+            _lenken_vorne += 0.5f * Keyboard.ADAxis;
+
+            _gas += -3f * Keyboard.WSAxis;
+            _vorderRad_L_Transform.Rotation = new float3(0,_gas,_lenken_vorne);
+            _vorderRad_R_Transform.Rotation = new float3(0,_gas,_lenken_vorne);
+            _hinterRad_L_Transform.Rotation = new float3(0,_gas,0);
+            _hinterRad_R_Transform.Rotation = new float3(0,_gas,0);
+
            float _zugUpDown = _zugTransform.Rotation.x;
-           _zugUpDown += 0.5f * Keyboard.WSAxis;
+           _zugUpDown += 0.5f * Keyboard.UpDownAxis;
            _zugTransform.Rotation = new float3(0,0,_zugUpDown);
+
+           /*--------------------------------------------------------------------
+             float newYRot = _carTrans.Rotation.y ;
+            _carTrans.Rotation = new float3(0, newYRot, 0);
+              float3 newPos = _carTrans.Position;
+            newPos.x += posVel * M.Sin(newYRot);
+            newPos.z += posVel * M.Cos(newYRot);
+            _carTrans.Position = newPos;
+           //--------------------------------------------------------------------*/
             // Clear the backbuffer
             RC.Clear(ClearFlags.Color | ClearFlags.Depth);
-
+            _camAngle = _camAngle + 33.3333f * M.Pi/180.0f * DeltaTime ;
             // Setup the camera 
-            RC.View = float4x4.CreateTranslation(0, 0, 10) * float4x4.CreateRotationX(-(float) Atan(15.0 / 40.0));
+            RC.View = float4x4.CreateTranslation(0, 0, 10) * float4x4.CreateRotationY(_camAngle);
             if (Mouse.LeftButton)
             {
                 float2 pickPosClip = Mouse.Position * new float2(2.0f / Width, -2.0f / Height) + new float2(-1, 1);
@@ -125,12 +157,7 @@ namespace Fusee.Tutorial.Core
                 }
             }
 
-              float newYRot = _zugTransform.Rotation.y + rotVel;
-              _zugTransform.Rotation = new float3(0, newYRot, 0);
-              float3 newPos =_zugTransform.Position;
-                newPos.x += posVel * M.Sin(newYRot);
-                newPos.z += posVel * M.Cos(newYRot);
-                _zugTransform.Position = newPos;
+
 
             // Render the scene on the current render context
             _sceneRenderer.Render(RC);
